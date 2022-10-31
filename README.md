@@ -46,7 +46,11 @@ Architecture
 -----
 
 ![Architecture diagram](architecture.png)
+
+A new line to be added
 New line added to this file
+3rd line to be added
+
 * A Python webapp which lets you vote between two options
 * A Redis queue which collects new votes
 * A .NET worker which consumes votes and stores them in…
