@@ -1,7 +1,7 @@
 pipeline{
     agent any
     tools{
-      maven 'Maven 3.8.6'
+      maven '3.8.6'
     }
     stages{
         stage('build'){
@@ -15,19 +15,26 @@ pipeline{
         stage('test'){
             steps{
                 echo 'test application'
+                dir('worker'){
+                  sh 'mvn clean test'
+                }
 
             }
         }
         stage('package'){
             steps{
                 echo 'package application'
+                dir('worker'){
+                  sh 'mvn package -DskipTest'
+                }
 
             }
         }
     }
     post{
       always{
-         echo 'Build pipeline application done'
+         archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+         echo 'Build pipeline application done, try again for update'
 
       }
    }
