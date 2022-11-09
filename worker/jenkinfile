@@ -27,7 +27,7 @@ pipeline{
     }
     post{
       always{
-         echo 'Build pipeline application done'
+         echo 'Build pipeline application done, try again for update'
 
       }
    }
