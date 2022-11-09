@@ -15,18 +15,25 @@ pipeline{
         stage('test'){
             steps{
                 echo 'test application'
+                dir('worker'){
+                  sh 'mvn clean test'
+                }
 
             }
         }
         stage('package'){
             steps{
                 echo 'package application'
+                dir('worker'){
+                  sh 'mvn package -DskipTest'
+                }
 
             }
         }
     }
     post{
       always{
+         archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
          echo 'Build pipeline application done, try again for update'
 
       }
