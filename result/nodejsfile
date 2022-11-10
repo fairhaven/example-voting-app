@@ -1,0 +1,39 @@
+pipeline{
+    agent any
+    tools{
+      nodejs 'NodeJS 19.0.0'
+    }
+    stages{
+        stage('build'){
+            steps{
+                echo 'Compiling application'
+                dir('result'){
+                  sh 'npm install'
+                }
+            }
+        }
+        stage('test'){
+            steps{
+                echo 'test application'
+                dir('result'){
+                  sh 'npm install'
+                  sh 'npm test'
+                }
+
+            }
+        }
+    }
+    post{
+      always{
+
+         echo 'Build pipeline application done, try again for update'
+
+      }
+      failure{
+        slackSend (channel: "jenkin-pipeline", message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+      success{
+        slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+   }
+}
