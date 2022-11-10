@@ -1,0 +1,47 @@
+pipeline{
+    agent any
+    tools{
+      maven '3.8.6'
+    }
+    stages{
+        stage('build'){
+            steps{
+                echo 'Compiling application'
+                dir('worker'){
+                  sh 'mvn compile'
+                }
+            }
+        }
+        stage('test'){
+            steps{
+                echo 'test application'
+                dir('worker'){
+                  sh 'mvn clean test'
+                }
+
+            }
+        }
+        stage('package'){
+            steps{
+                echo 'package application'
+                dir('worker'){
+                  sh 'mvn package -DskipTest'
+                }
+
+            }
+        }
+    }
+    post{
+      always{
+         archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+         echo 'Build pipeline application done, try again for update'
+
+      }
+      failure{
+        slackSend (channel: "jenkin-pipeline", message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+      success{
+        slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+   }
+}
