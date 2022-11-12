@@ -3,7 +3,7 @@ pipeline{
        docker {  image 'node:8.16.0-alpine' }
     }
 
-       
+
 
     stages{
         stage('build'){
@@ -38,5 +38,3 @@ pipeline{
         slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
       }
    }
- }
-}
