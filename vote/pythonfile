@@ -7,18 +7,23 @@ pipeline{
 
     stages{
         stage('build'){
+            when{
+              changeset "**/vote/**"
+            }
             steps{
                 echo 'Compiling application'
-                dir('result'){
-                  sh 'pip install -i'
+                dir('vote'){
+                  sh 'pip install -r requirements.txt'
                 }
             }
         }
         stage('test'){
+            when{
+              changeset "**/vote/**"
+            }
             steps{
                 echo 'test application'
-                dir('result'){
-                  sh 'pip install -i'
+                dir('vote'){
                   sh 'nosetests -v'
                 }
 
@@ -28,7 +33,7 @@ pipeline{
     post{
       always{
 
-         echo 'Build pipeline application done, try again for update'
+         echo 'Build pipeline application for vote done, try again for update'
 
       }
       failure{
