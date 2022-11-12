@@ -1,6 +1,9 @@
 pipeline{
     agent {
-       docker {  image 'python:3.9.15-alpine' }
+       docker {
+        image 'python:3.9.15-alpine'
+        args '--user root'
+       }
     }
 
 
@@ -13,7 +16,7 @@ pipeline{
             steps{
                 echo 'Compiling application'
                 dir('vote'){
-                  sh 'sudo -H pip install -r requirements.txt'
+                  sh 'pip install -r requirements.txt'
                 }
             }
         }
