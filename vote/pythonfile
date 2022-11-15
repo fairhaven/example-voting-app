@@ -1,12 +1,5 @@
 pipeline{
-    agent {
-       docker {
-        image 'python:3.9.15-alpine'
-        args '--user root'
-       }
-    }
-
-
+    agent none
 
     stages{
         stage('build'){
@@ -22,17 +15,33 @@ pipeline{
         }
         stage('test'){
             when{
-              changeset "**/vote/**"
+            changeset "**/vote**"
             }
             steps{
-                echo 'test application'
+                echo 'test vote application'
                 dir('vote'){
                   sh 'nosetests -v'
                 }
 
             }
         }
-    }
+        stage('package'){
+            agent any
+            when{
+              changeset "**/worker/**"
+              branch 'master'
+            }
+            steps{
+                echo 'package worker application with docker'
+                script{
+                  docker.WithRegustry('https://index.docker.io/v1/', 'dockerlogin'){
+                     def workerImage = docker.build("seyibright/vote:v${env.BUILD_ID}", "./vote")
+                     workerImage.push()
+                     workerImage.push("${env.BRANCH_NAME}")
+                  }
+                }
+            }
+        }
     post{
       always{
 
@@ -45,5 +54,6 @@ pipeline{
       success{
         slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
       }
-   }
-}
+    }
+  }
+ }
