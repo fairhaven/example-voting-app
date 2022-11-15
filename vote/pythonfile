@@ -15,7 +15,7 @@ pipeline{
         }
         stage('test'){
             when{
-            changeset "**/vote**"
+              changeset "**/vote**"
             }
             steps{
                 echo 'test vote application'
