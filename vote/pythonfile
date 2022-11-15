@@ -7,7 +7,7 @@ pipeline{
               changeset "**/vote/**"
             }
             steps{
-                echo 'Compiling application'
+                echo 'Compiling vote application'
                 dir('vote'){
                   sh 'pip install -r requirements.txt'
                 }
@@ -15,7 +15,7 @@ pipeline{
         }
         stage('test'){
             when{
-              changeset "**/vote**"
+              changeset "**/vote/**"
             }
             steps{
                 echo 'test vote application'
@@ -28,11 +28,11 @@ pipeline{
         stage('package'){
             agent any
             when{
-              changeset "**/worker/**"
+              changeset "**/vote/**"
               branch 'master'
             }
             steps{
-                echo 'package worker application with docker'
+                echo 'package vote application with docker'
                 script{
                   docker.WithRegustry('https://index.docker.io/v1/', 'dockerlogin'){
                      def workerImage = docker.build("seyibright/vote:v${env.BUILD_ID}", "./vote")
