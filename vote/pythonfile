@@ -3,10 +3,16 @@ pipeline{
 
     stages{
         stage('build'){
-            when{
-              changeset "**/vote/**"
+          agent {
+            docker {
+              image 'python:3.9.15-alpine'
+              args '--user root'
             }
-            steps{
+          }
+          when{
+              changeset "**/vote/**"
+          }
+          steps{
                 echo 'Compiling vote application'
                 dir('vote'){
                   sh 'pip install -r requirements.txt'
@@ -14,16 +20,22 @@ pipeline{
             }
         }
         stage('test'){
-            when{
+         agent {
+          docker {
+            image 'python:3.9.15-alpine'
+            args '--user root'
+          }
+         }
+         when{
               changeset "**/vote/**"
-            }
-            steps{
-                echo 'test vote application'
-                dir('vote'){
-                  sh 'nosetests -v'
-                }
-
-            }
+         }
+         steps{
+              echo 'test vote application'
+              dir('vote'){
+               sh 'pip install -r requirements.txt'
+               sh 'nosetests -v'
+              }
+         }
         }
         stage('package'){
             agent any
@@ -42,6 +54,7 @@ pipeline{
                 }
             }
         }
+      }
     post{
       always{
 
@@ -55,5 +68,4 @@ pipeline{
         slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
       }
     }
-  }
 }
