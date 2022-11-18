@@ -55,9 +55,7 @@ pipeline{
 
             }
         }
-     }
-     stages{
-         stage('vote-build'){
+        stage('vote-build'){
            agent {
              docker {
                image 'python:3.9.15-alpine'
@@ -68,13 +66,13 @@ pipeline{
                changeset "**/vote/**"
            }
            steps{
-                 echo 'Compiling vote application'
-                 dir('vote'){
-                   sh 'pip install -r requirements.txt'
-                 }
-             }
-         }
-         stage('vote-test'){
+              echo 'Compiling vote application'
+              dir('vote'){
+                sh 'pip install -r requirements.txt'
+              }
+           }
+        }
+        stage('vote-test'){
           agent {
            docker {
              image 'python:3.9.15-alpine'
@@ -91,8 +89,8 @@ pipeline{
                 sh 'nosetests -v'
                }
           }
-         }
-         stage('vote-package'){
+        }
+        stage('vote-package'){
              agent any
              when{
                changeset "**/vote/**"
@@ -109,9 +107,7 @@ pipeline{
                  }
              }
          }
-    }
-    stages{
-        stage('result-build'){
+         stage('result-build'){
           agent {
             docker {
               image 'node:8.16.0-alpine'
@@ -161,7 +157,6 @@ pipeline{
                 }
             }
         }
-
     }
 
     post{
