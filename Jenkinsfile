@@ -183,7 +183,6 @@ pipeline {
       agent any
       steps {
         sh '''echo \'Deploy instavote app with docker compose\'
-sh \'docker-compose up -d\'
 '''
       }
     }
