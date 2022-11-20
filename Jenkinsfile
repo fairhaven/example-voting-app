@@ -1,5 +1,5 @@
 pipeline{
-  
+
 
     stages{
         stage('worker-build'){
@@ -91,7 +91,7 @@ pipeline{
           }
         }
         stage('vote-package'){
-             agent any
+             agent none
              when{
                changeset "**/vote/**"
                branch 'master'
@@ -141,7 +141,7 @@ pipeline{
             }
         }
         stage('result-package'){
-            agent any
+            agent none
             when{
               changeset "**/result/**"
               branch 'master'
