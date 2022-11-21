@@ -35,10 +35,10 @@ pipeline{
 
             }
         }
-    }
+     }
     post{
       always{
-         archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+         
          echo 'Build pipeline application done, try again for update'
 
       }
@@ -48,5 +48,6 @@ pipeline{
       success{
         slackSend (channel: "jenkin-pipeline", message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
       }
-   }
+    }
+  }
 }
