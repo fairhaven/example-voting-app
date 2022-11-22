@@ -223,7 +223,7 @@ pipeline {
   post {
     always {
       echo 'Build pipeline application done, try again for update'
-    }
+  }
 
     failure {
       slackSend(channel: 'jenkin-pipeline', message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
