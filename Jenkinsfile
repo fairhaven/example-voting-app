@@ -182,8 +182,7 @@ pipeline {
     stage('Deploy to Dev') {
       agent any
       steps {
-        sh '''echo \'Deploy instavote app with docker compose\'
-'''
+        sh '''echo \'Deploy instavote app with docker compose\''''
 
       }
     }
@@ -220,10 +219,11 @@ pipeline {
             }
         }
     }
+  }
   post {
     always {
       echo 'Build pipeline application done, try again for update'
-  }
+    }
 
     failure {
       slackSend(channel: 'jenkin-pipeline', message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
@@ -235,4 +235,3 @@ pipeline {
 
   }
  }
-}
