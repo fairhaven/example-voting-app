@@ -182,24 +182,56 @@ pipeline {
     stage('Deploy to Dev') {
       agent any
       steps {
-        sh '''echo \'Deploy instavote app with docker compose\'
-'''
+        sh echo 'docker-compose up -d'
+
       }
     }
 
-  }
-  post {
-    always {
-      echo 'Build pipeline application done, try again for update'
+    stage('Sonarqube') {
+      agent any
+  /*    when{
+        branch 'master'
+      }
+  */
+      tools {
+        jdk "JDK11" // the name you have given the JDK installation in Global Tool Configuration
+      }
+
+      environment{
+        sonarpath = tool 'SonarScanner'
+      }
+
+      steps {
+            echo 'Running Sonarqube Analysis..'
+            withSonarQubeEnv('sonar-instavote') {
+              sh "${sonarpath}/bin/sonar-scanner -Dproject.settings=sonar-project.properties -Dorg.jenkinsci.plugins.durabletask.BourneShellScript.HEARTBEAT_CHECK_INTERVAL=86400"
+            }
+      }
     }
 
-    failure {
-      slackSend(channel: 'jenkin-pipeline', message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
-    }
 
-    success {
-      slackSend(channel: 'jenkin-pipeline', message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+    stage("Quality Gate") {
+        steps {
+            timeout(time: 1, unit: 'HOURS') {
+                // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                // true = set pipeline to UNSTABLE, false = don't
+                waitForQualityGate abortPipeline: true
+            }
+        }
     }
+    post {
+      always {
+        echo 'Build pipeline application done, try again for update'
+      }
 
+      failure {
+        slackSend(channel: 'jenkin-pipeline', message: "Build Failed - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+
+      success {
+        slackSend(channel: 'jenkin-pipeline', message: "Build Successful - ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
+      }
+
+    }
   }
 }
