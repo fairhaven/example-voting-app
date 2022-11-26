@@ -101,6 +101,21 @@ pipeline {
 
       }
     }
+    stage('vote-integration') {
+      agent any
+      when {
+        changeset '**/vote/**'
+        branch 'master'
+      }
+      steps {
+        echo 'test vote application'
+        dir(path: 'vote') {
+          sh 'integration_sh.sh'
+        
+        }
+
+      }
+    }
 
     stage('vote-package') {
       agent any
